@@ -68,10 +68,26 @@ public class Telekinesis extends EcoEnchant {
             return;
         }
 
+        List<ItemStack> drops = new ArrayList<>();
+
         for (Item item : event.getItems()) {
-            item.teleport(player.getLocation());
+            drops.add(item.getItemStack());
+            for (int i = 0; i < McmmoManager.getBonusDropCount(block); i++) {
+                drops.add(item.getItemStack());
+            }
         }
 
+        event.getItems().clear();
+
+        DropQueue queue = new DropQueue(player)
+                .setLocation(block.getLocation())
+                .addItems(drops);
+
+        if (!always) {
+            queue.forceTelekinesis();
+        }
+
+        queue.push();
     }
 
     // For exp drops, blockdropitemevent doesn't cover xp
